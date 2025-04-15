@@ -16,23 +16,12 @@ SCOPES = [
 
 # With this:
 import json
-from streamlit import secrets
+from google.oauth2.service_account import Credentials
 
-try:
-    # First try Streamlit secrets (for cloud)
-    service_account_info = json.loads(st.secrets["gcp_service_account"])
-    credentials = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
-except:
-    # Fallback to local file (for development)
-    try:
-        SERVICE_ACCOUNT_FILE = "service-account.json"  # Place this file in your project root
-        credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-    except Exception as e:
-        st.error("Failed to load Google credentials")
-        st.stop()
-
-gc = gspread.authorize(credentials)
-
+# Load from Streamlit Secrets
+service_account_info = json.loads(st.secrets["gcp_service_account"])
+creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+gc = gspread.authorize(creds)
 
 # Authenticate using the service account
 
