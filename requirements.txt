@@ -6,4 +6,4 @@ google-auth==2.17.3
 streamlit-aggrid==0.1.0
 pyopenssl==23.2.0
 protobuf==3.20.3  # Required for Python 3.9 compatibility
-streamlit-plotly-events==1.0.1
+streamlit-plotly-events==0.0.6
