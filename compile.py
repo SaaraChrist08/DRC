@@ -7,18 +7,34 @@ from st_aggrid import AgGrid, GridOptionsBuilder
 from st_aggrid import GridUpdateMode
 from streamlit_plotly_events import plotly_events  # Import event capture function
 
-# Path to your service account key file
-SERVICE_ACCOUNT_FILE = "D:\\DRC INTERNSHIP\\Saara_Compiled_3\\drc-articles-dashboard-7e9e1b410ff1.json"
 
-# Define the scope for Google APIs
+# Define the scope for Google APIs (add this near your imports)
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
-# Authenticate using the service account
-credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+# With this:
+import json
+from streamlit import secrets
+
+try:
+    # First try Streamlit secrets (for cloud)
+    service_account_info = json.loads(st.secrets["gcp_service_account"])
+    credentials = Credentials.from_service_account_info(service_account_info, scopes=SCOPES)
+except:
+    # Fallback to local file (for development)
+    try:
+        SERVICE_ACCOUNT_FILE = "service-account.json"  # Place this file in your project root
+        credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    except Exception as e:
+        st.error("Failed to load Google credentials")
+        st.stop()
+
 gc = gspread.authorize(credentials)
+
+
+# Authenticate using the service account
 
 # Rest of your code remains the same...
 # Open the master Google Sheet by key or URL
